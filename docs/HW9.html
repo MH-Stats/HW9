@@ -57,24 +57,61 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="HW9_files/libs/clipboard/clipboard.min.js"></script>
-<script src="HW9_files/libs/quarto-html/quarto.js"></script>
-<script src="HW9_files/libs/quarto-html/popper.min.js"></script>
-<script src="HW9_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="HW9_files/libs/quarto-html/anchor.min.js"></script>
-<link href="HW9_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="HW9_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="HW9_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="HW9_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="HW9_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
 
 
 </head>
 
 <body class="fullcontent">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -132,7 +169,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
 ✖ recipes::step()   masks stats::step()
-• Search for functions across packages at https://www.tidymodels.org/find/</code></pre>
+• Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://www4.stat.ncsu.edu/~online/datasets/SeoulBikeData.csv"</span>,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">local =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"latin1"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -248,11 +285,11 @@ the `.groups` argument.</code></pre>
 2 rsq     standard      0.822    10   0.0151 Preprocessor1_Model1</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting model to training set</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>MLR_last_fit <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(MLR_rec) <span class="sc">|&gt;</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(MLR_spec) <span class="sc">|&gt;</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>MLR_last_fit <span class="sc">|&gt;</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
@@ -262,7 +299,7 @@ the `.groups` argument.</code></pre>
 2 rsq     standard       0.846 Preprocessor1_Model1</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Final model</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>MLR_last_fit <span class="sc">|&gt;</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">|&gt;</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -357,8 +394,9 @@ Attaching package: 'Matrix'</code></pre>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating grid </span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>LASSO_grid <span class="ot">&lt;-</span> LASSO_wkf <span class="sc">|&gt;</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> bike_cv10,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> <span class="fu">grid_regular</span>(<span class="fu">penalty</span>(), <span class="at">levels =</span> <span class="dv">100</span>)) <span class="co"># Levels is how many LASSO models you want to create</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>LASSO_grid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> <span class="fu">grid_regular</span>(<span class="fu">penalty</span>(), <span class="at">levels =</span> <span class="dv">100</span>),</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse, mae)) <span class="co"># Levels is how many LASSO models you want to create</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>LASSO_grid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Tuning results
 # 10-fold cross-validation 
@@ -403,12 +441,14 @@ Attaching package: 'Matrix'</code></pre>
          &lt;dbl&gt; &lt;chr&gt;                 
 1 0.0000000001 Preprocessor1_Model001</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>LASSO_best_mae <span class="ot">&lt;-</span> LASSO_grid <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mae"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now that we have the best one we can use finalize_workflow to tell R to finish the training using the smallest penalty we found in tune(). Then we can fit it to the training model to get our final model fit</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking to make sure it sets the correct penalty in tune()</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>LASSO_wkf <span class="sc">|&gt;</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(LASSO_lowest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking to make sure it sets the correct penalty in tune()</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>LASSO_wkf <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(LASSO_lowest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
 Preprocessor: Recipe
@@ -432,13 +472,13 @@ Main Arguments:
 
 Computational engine: glmnet </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating final model fit</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>LASSO_final <span class="ot">&lt;-</span> LASSO_wkf <span class="sc">|&gt;</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(LASSO_lowest) <span class="sc">|&gt;</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_train)</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Using tidy() to display the model fit</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(LASSO_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating final model fit</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>LASSO_final <span class="ot">&lt;-</span> LASSO_wkf <span class="sc">|&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(LASSO_lowest) <span class="sc">|&gt;</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_train)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Using tidy() to display the model fit</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(LASSO_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 14 × 3
    term                    estimate      penalty
@@ -464,81 +504,84 @@ Computational engine: glmnet </code></pre>
 <h3 class="anchored" data-anchor-id="regression-tree-model">Regression Tree Model</h3>
 <p>Tree based methods are a flexible way to split up predictor space into regions. Each of the regions created can have a different prediction made for it. A regression tree is used when the goal is to predict a continuous response, normally using the mean of observations in region as the prediction.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Making new recipe for clarity</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>reg_rec <span class="ot">&lt;-</span> LASSO_rec </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating decision_tree</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>reg_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">tree_depth =</span> <span class="fu">tune</span>(),</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">min_n =</span> <span class="dv">20</span>,</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">cost_complexity =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating workflow</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>reg_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(reg_rec) <span class="sc">|&gt;</span></span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(reg_spec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Making new recipe for clarity</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>reg_rec <span class="ot">&lt;-</span> LASSO_rec </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating decision_tree</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>reg_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">tree_depth =</span> <span class="fu">tune</span>(),</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">min_n =</span> <span class="dv">20</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">cost_complexity =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating workflow</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>reg_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(reg_rec) <span class="sc">|&gt;</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(reg_spec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The next step is to use CV to select the tuning parameters we will use and to do so we will once again use tune_grid().</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Specifying levels</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>reg_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(<span class="fu">cost_complexity</span>(),</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">tree_depth</span>(),</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting using tune_grid</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>reg_fit <span class="ot">&lt;-</span> reg_wkf <span class="sc">|&gt;</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> bike_cv10,</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> reg_grid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Specifying levels</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>reg_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(<span class="fu">cost_complexity</span>(),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">tree_depth</span>(),</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting using tune_grid</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>reg_fit <span class="ot">&lt;-</span> reg_wkf <span class="sc">|&gt;</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> bike_cv10,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> reg_grid,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse, mae))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now that this is setup we should sort this by getting the smallest rmse value, and while doing this will filter just to show rmse. After that we will use select_best() to grab the best tuning parameter values.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># collecting metrics</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>reg_fit <span class="sc">|&gt;</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># collecting metrics</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>reg_fit <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 100 × 8
-   cost_complexity tree_depth .metric .estimator     mean     n  std_err .config
-             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;  
- 1    0.0000000001          1 rmse    standard   6432.       10 350.     Prepro…
- 2    0.0000000001          1 rsq     standard      0.595    10   0.0484 Prepro…
- 3    0.000000001           1 rmse    standard   6432.       10 350.     Prepro…
- 4    0.000000001           1 rsq     standard      0.595    10   0.0484 Prepro…
- 5    0.00000001            1 rmse    standard   6432.       10 350.     Prepro…
- 6    0.00000001            1 rsq     standard      0.595    10   0.0484 Prepro…
- 7    0.0000001             1 rmse    standard   6432.       10 350.     Prepro…
- 8    0.0000001             1 rsq     standard      0.595    10   0.0484 Prepro…
- 9    0.000001              1 rmse    standard   6432.       10 350.     Prepro…
-10    0.000001              1 rsq     standard      0.595    10   0.0484 Prepro…
+   cost_complexity tree_depth .metric .estimator  mean     n std_err .config    
+             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;      
+ 1    0.0000000001          1 mae     standard   4969.    10    243. Preprocess…
+ 2    0.0000000001          1 rmse    standard   6432.    10    350. Preprocess…
+ 3    0.000000001           1 mae     standard   4969.    10    243. Preprocess…
+ 4    0.000000001           1 rmse    standard   6432.    10    350. Preprocess…
+ 5    0.00000001            1 mae     standard   4969.    10    243. Preprocess…
+ 6    0.00000001            1 rmse    standard   6432.    10    350. Preprocess…
+ 7    0.0000001             1 mae     standard   4969.    10    243. Preprocess…
+ 8    0.0000001             1 rmse    standard   6432.    10    350. Preprocess…
+ 9    0.000001              1 mae     standard   4969.    10    243. Preprocess…
+10    0.000001              1 rmse    standard   6432.    10    350. Preprocess…
 # ℹ 90 more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using select_best()</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>reg_best_params <span class="ot">&lt;-</span> reg_fit <span class="sc">|&gt;</span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"rmse"</span>)</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>reg_best_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using select_best()</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>reg_best_params <span class="ot">&lt;-</span> reg_fit <span class="sc">|&gt;</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"rmse"</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>reg_best_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
   cost_complexity tree_depth .config              
             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;                
 1           0.001         11 Preprocessor1_Model38</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>reg_best_mae <span class="ot">&lt;-</span> reg_fit <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mae"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next step is to finalize the data using finalize_workflow.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Final fit</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>reg_final <span class="ot">&lt;-</span> reg_wkf <span class="sc">|&gt;</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(reg_best_params) <span class="sc">|&gt;</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Final fit</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>reg_final <span class="ot">&lt;-</span> reg_wkf <span class="sc">|&gt;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(reg_best_params) <span class="sc">|&gt;</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To see the way that data is actually fit we can plot the tree</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading in rpart.plot</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating plot</span></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>reg_final <span class="sc">%&gt;%</span></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  rpart.plot<span class="sc">::</span><span class="fu">rpart.plot</span>(<span class="at">roundint =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading in rpart.plot</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating plot</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>reg_final <span class="sc">%&gt;%</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  rpart.plot<span class="sc">::</span><span class="fu">rpart.plot</span>(<span class="at">roundint =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -552,36 +595,37 @@ Computational engine: glmnet </code></pre>
 <h3 class="anchored" data-anchor-id="bagged-tree-model">Bagged Tree Model</h3>
 <p>A bagged tree model is when you use bootstrapping aggregation minus a general method. Bootstrapping is when you resample from the data (non-parametric) or a fitted model (parametric), and have a method or estimation applied to each resample. This can be used to obtain standard errors or construct confidence intervals, but in our case we are going to be looking at standard errors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading in baguette libary</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(baguette)</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Renaming rec for clarity</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>bag_rec <span class="ot">&lt;-</span> LASSO_rec</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting up model</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>bag_spec <span class="ot">&lt;-</span> <span class="fu">bag_tree</span>(<span class="at">tree_depth =</span> <span class="fu">tune</span>(), <span class="at">min_n =</span> <span class="dv">20</span>, <span class="at">cost_complexity =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating workflow</span></span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>bag_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(bag_rec) <span class="sc">|&gt;</span></span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(bag_spec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading in baguette libary</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(baguette)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Renaming rec for clarity</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>bag_rec <span class="ot">&lt;-</span> LASSO_rec</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting up model</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>bag_spec <span class="ot">&lt;-</span> <span class="fu">bag_tree</span>(<span class="at">tree_depth =</span> <span class="fu">tune</span>(), <span class="at">min_n =</span> <span class="dv">20</span>, <span class="at">cost_complexity =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating workflow</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>bag_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(bag_rec) <span class="sc">|&gt;</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(bag_spec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we are going to fit to CV folds as we did to the other models, but of important note this is not really necessary with bagged tree models as we could instead just use out-of-bag observations to determine how well our model is working. We are also going to create a new reg_grid to tune our model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating fit and grid</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>bag_fit <span class="ot">&lt;-</span> bag_wkf <span class="sc">|&gt;</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> bike_cv10,</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> <span class="fu">grid_regular</span>(<span class="fu">cost_complexity</span>(),</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">tree_depth</span>(),</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>                                <span class="at">levels =</span> <span class="dv">5</span>)) <span class="co"># only doing five levels because it takes a very long time to load</span></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Collecting metrics across the folds </span></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>bag_fit <span class="sc">|&gt;</span></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"rmse"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(cost_complexity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating fit and grid</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>bag_fit <span class="ot">&lt;-</span> bag_wkf <span class="sc">|&gt;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> bike_cv10,</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> <span class="fu">grid_regular</span>(<span class="fu">cost_complexity</span>(),</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">tree_depth</span>(),</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>                                <span class="at">levels =</span> <span class="dv">5</span>),</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse, mae)) <span class="co"># only doing five levels because it takes a very long time to load</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Collecting metrics across the folds </span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>bag_fit <span class="sc">|&gt;</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"rmse"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(cost_complexity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 25 × 8
    cost_complexity tree_depth .metric .estimator  mean     n std_err .config    
@@ -601,16 +645,19 @@ Computational engine: glmnet </code></pre>
 </div>
 <p>Now we need to once again use select_best() to grab our best parameter and then fit it on to the training data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grabbing best param</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>bag_best_params <span class="ot">&lt;-</span> bag_fit <span class="sc">|&gt;</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"rmse"</span>)</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting data</span></span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>bag_best <span class="ot">&lt;-</span> bag_wkf <span class="sc">|&gt;</span></span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(bag_best_params) <span class="sc">|&gt;</span></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_train)</span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>bag_best</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grabbing best param</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>bag_best_params <span class="ot">&lt;-</span> bag_fit <span class="sc">|&gt;</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"rmse"</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>bag_best_mae <span class="ot">&lt;-</span> bag_fit <span class="sc">|&gt;</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mae"</span>)</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting data</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>bag_best <span class="ot">&lt;-</span> bag_wkf <span class="sc">|&gt;</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(bag_best_params) <span class="sc">|&gt;</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_train)</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>bag_best</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
 Preprocessor: Recipe
@@ -649,10 +696,357 @@ Variable importance scores include:
 </div>
 </div>
 </section>
+<section id="random-forest-model" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest-model">Random Forest Model</h3>
+<p>The final model we will be making is a Random forest model, which also uses bagging. It creates multiple trees from the bootstrap samples then it averages the results from them to create a final prediction. The big difference between it and a bagged tree model is that it is does not use all predictors at every step, instead it randomly splits them into a subset for a number of times based off the tuning parameters. If a really strong predictor exists it will likely cause each bootstrap tree to use it for the first split, which makes bagges trees have more correlated predictions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in library</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># renaming recipe for clarity</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>rf_rec <span class="ot">&lt;-</span> LASSO_rec</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="co"># creating model </span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating workflow</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>rf_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rf_rec) <span class="sc">|&gt;</span></span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_spec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we need to once again set the grid and fit.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating fit and grid</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> rf_wkf <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> bike_cv10,</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> <span class="dv">10</span>,</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse, mae))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
+</div>
+</div>
+<p>After that we again grab the best params</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grabbing params</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>rf_best_params <span class="ot">&lt;-</span> rf_fit <span class="sc">|&gt;</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"rmse"</span>)</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>rf_best_mae <span class="ot">&lt;-</span> rf_fit <span class="sc">|&gt;</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mae"</span>)</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="co"># final fit</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>rf_final <span class="ot">&lt;-</span> rf_wkf <span class="sc">|&gt;</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(rf_best_params) <span class="sc">|&gt;</span></span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_train)</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>rf_final</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: rand_forest()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+5 Recipe Steps
+
+• step_date()
+• step_mutate()
+• step_rm()
+• step_dummy()
+• step_normalize()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Ranger result
+
+Call:
+ ranger::ranger(x = maybe_data_frame(x), y = y, mtry = min_cols(~11L,      x), num.threads = 1, verbose = FALSE, seed = sample.int(10^5,      1)) 
+
+Type:                             Regression 
+Number of trees:                  500 
+Sample size:                      263 
+Number of independent variables:  13 
+Mtry:                             11 
+Target node size:                 5 
+Variable importance mode:         none 
+Splitrule:                        variance 
+OOB prediction error (MSE):       9339504 
+R squared (OOB):                  0.9046045 </code></pre>
+</div>
+</div>
+</section>
+<section id="comparing-all-final-models-using-rmse-and-mae" class="level3">
+<h3 class="anchored" data-anchor-id="comparing-all-final-models-using-rmse-and-mae">Comparing all Final Models using RMSE and MAE</h3>
+<p>First step is to find which model has the best RMSE and to compare them all in a table to decide upon that.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># final model on LASSO </span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>LASSO_last_fit <span class="ot">&lt;-</span> LASSO_wkf <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(LASSO_lowest) <span class="sc">|&gt;</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># collecting metrics</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>LASSO_last_fit <span class="sc">|&gt;</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  .metric .estimator .estimate .config             
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 rmse    standard    3999.    Preprocessor1_Model1
+2 rsq     standard       0.844 Preprocessor1_Model1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># final model on regression tree</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>reg_last_fit <span class="ot">&lt;-</span> reg_wkf <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(reg_best_params) <span class="sc">|&gt;</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co"># collecting metrics</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>reg_last_fit <span class="sc">|&gt;</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  .metric .estimator .estimate .config             
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 rmse    standard    3096.    Preprocessor1_Model1
+2 rsq     standard       0.905 Preprocessor1_Model1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># final model on bagged tree</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>bag_last_fit <span class="ot">&lt;-</span> bag_wkf <span class="sc">|&gt;</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(bag_best_params) <span class="sc">|&gt;</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split)</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="co"># collecting metrics</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>bag_last_fit <span class="sc">|&gt;</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  .metric .estimator .estimate .config             
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 rmse    standard    2963.    Preprocessor1_Model1
+2 rsq     standard       0.915 Preprocessor1_Model1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># final model on random forest model</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>rf_last_fit <span class="ot">&lt;-</span> rf_wkf <span class="sc">|&gt;</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(rf_best_params) <span class="sc">|&gt;</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse))</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co"># collecting metrics for best rmse</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(LASSO_last_fit <span class="sc">|&gt;</span>  <span class="fu">collect_metrics</span>(),</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>  reg_last_fit <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(),</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>  bag_last_fit <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(),</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>  rf_last_fit <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(),</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>  MLR_last_fit <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  .metric .estimator .estimate .config             
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 rmse    standard    3999.    Preprocessor1_Model1
+2 rsq     standard       0.844 Preprocessor1_Model1
+3 rmse    standard    3096.    Preprocessor1_Model1
+4 rsq     standard       0.905 Preprocessor1_Model1
+5 rmse    standard    2963.    Preprocessor1_Model1
+6 rsq     standard       0.915 Preprocessor1_Model1
+7 rmse    standard    2636.    Preprocessor1_Model1
+8 rmse    standard    3980.    Preprocessor1_Model1
+9 rsq     standard       0.846 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<p>Based off these findings since rf_last_fit has the lowest rmse at 2590 we would choose that as the very best model when selecting based off rmse.</p>
+<p>Now we need to repeat what we just did but instead do it for MAE</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>LASSO_last_fit2 <span class="ot">&lt;-</span> LASSO_wkf <span class="sc">|&gt;</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(LASSO_best_mae) <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="co"># final model on regression tree</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>reg_last_fit2 <span class="ot">&lt;-</span> reg_wkf <span class="sc">|&gt;</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(reg_best_mae) <span class="sc">|&gt;</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a><span class="co"># final model on bagged tree</span></span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>bag_last_fit2 <span class="ot">&lt;-</span> bag_wkf <span class="sc">|&gt;</span></span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(bag_best_mae) <span class="sc">|&gt;</span></span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a><span class="co"># final model on random forest model</span></span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>rf_last_fit2 <span class="ot">&lt;-</span> rf_wkf <span class="sc">|&gt;</span></span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(rf_best_mae) <span class="sc">|&gt;</span></span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a><span class="co"># collecting metrics for best rmse</span></span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(LASSO_last_fit2 <span class="sc">|&gt;</span>  <span class="fu">collect_metrics</span>(),</span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a>  reg_last_fit2 <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(),</span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a>  bag_last_fit2 <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(),</span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a>  rf_last_fit2 <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  .metric .estimator .estimate .config             
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 mae     standard       3063. Preprocessor1_Model1
+2 mae     standard       2362. Preprocessor1_Model1
+3 mae     standard       2431. Preprocessor1_Model1
+4 mae     standard       2121. Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<p>Based off these results we once again find that rf_last_fit has the lowest MAE at 2132 indicating that both the mae and rmse suppourt the notion that this is the best model to fit our data.</p>
+</section>
+<section id="extracting-final-model-fits-and-summary-of-models" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-final-model-fits-and-summary-of-models">Extracting Final Model Fits and Summary of Models</h3>
+<p>For the LASSO and MLR models we are going to report the final coefficent tables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MLR coefficent table</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>MLR_last_fit <span class="sc">|&gt;</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">|&gt;</span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 14 × 5
+   term                    estimate std.error statistic   p.value
+   &lt;chr&gt;                      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 (Intercept)              17446.       252.    69.3   9.38e-165
+ 2 temp                     -2439.      5215.    -0.468 6.40e-  1
+ 3 humidity                 -1927.      1904.    -1.01  3.13e-  1
+ 4 wind                      -523.       286.    -1.83  6.86e-  2
+ 5 vis                        -63.7      361.    -0.177 8.60e-  1
+ 6 dew_point                 7143.      6143.     1.16  2.46e-  1
+ 7 solar_rads                4088.       473.     8.64  6.74e- 16
+ 8 rain                     -1779.       333.    -5.35  2.00e-  7
+ 9 snow                      -317.       276.    -1.15  2.50e-  1
+10 season_Spring            -2528.       355.    -7.12  1.14e- 11
+11 season_Summer            -1670.       442.    -3.78  1.98e-  4
+12 season_Winter            -3684.       501.    -7.35  2.88e- 12
+13 holiday_No.Holiday         835.       256.     3.26  1.28e-  3
+14 weekend_weekday_Weekend  -1050.       256.    -4.10  5.56e-  5</code></pre>
+</div>
+</div>
+<p>Based off these results we find that dew point temperature had the strongest positive impact on bike counts with an estimate of 7143 and a p- value of 2.46e-1, while the season being winter had the strongest negative impact on bike counts with an estimate of -3684 and a p-value of 2.88e-12.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LASSO coefficent table</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>LASSO_last_fit <span class="sc">|&gt;</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">|&gt;</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 14 × 3
+   term                    estimate      penalty
+   &lt;chr&gt;                      &lt;dbl&gt;        &lt;dbl&gt;
+ 1 (Intercept)               17446. 0.0000000001
+ 2 temp                        389. 0.0000000001
+ 3 humidity                   -887. 0.0000000001
+ 4 wind                       -522. 0.0000000001
+ 5 vis                           0  0.0000000001
+ 6 dew_point                  3752. 0.0000000001
+ 7 solar_rads                 4065. 0.0000000001
+ 8 rain                      -1841. 0.0000000001
+ 9 snow                       -336. 0.0000000001
+10 season_Spring             -2505. 0.0000000001
+11 season_Summer             -1607. 0.0000000001
+12 season_Winter             -3653. 0.0000000001
+13 holiday_No.Holiday          820. 0.0000000001
+14 weekend_weekday_Weekend   -1060. 0.0000000001</code></pre>
+</div>
+</div>
+<p>Based off these results we find that every variable had an extremely low penalty. In this model solar raditaion ending up having the highest positive estimate at 4065, while the season being winter once again had the lowest negative impact at -3653.</p>
+<p>For the regression tree model we are going to create a plot of the final fit</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># regression tree model plot</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>reg_last_fit <span class="sc">%&gt;%</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  rpart.plot<span class="sc">::</span><span class="fu">rpart.plot</span>(<span class="at">roundint =</span> <span class="cn">FALSE</span>, <span class="at">cex =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="HW9_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot shows that temp &lt; .034 is an important splitting condition that appears to have a large impact on the quantity of solar radiation when it is not less than that point and when below that it indicates the season is winter. This helps us visualize how each variable is impacting bike counts based off specific values.</p>
+<p>For the bagged tree and random forest model we are going to make a variable importance plot using the vip package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'vip'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:utils':
+
+    vi</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rebuilding our model</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a><span class="co"># creating model </span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>rf_vip_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="dv">5</span>, <span class="at">min_n =</span> <span class="dv">5</span>, <span class="at">trees =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"impurity"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating workflow</span></span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>rf_vip_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rf_rec) <span class="sc">|&gt;</span></span>
+<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_vip_spec)</span>
+<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a><span class="co"># creating fit</span></span>
+<span id="cb72-14"><a href="#cb72-14" aria-hidden="true" tabindex="-1"></a>rf_vip_fit <span class="ot">&lt;-</span> rf_vip_wkf <span class="sc">|&gt;</span> </span>
+<span id="cb72-15"><a href="#cb72-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(bike_split)</span>
+<span id="cb72-16"><a href="#cb72-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-17"><a href="#cb72-17" aria-hidden="true" tabindex="-1"></a><span class="co"># creating plot</span></span>
+<span id="cb72-18"><a href="#cb72-18" aria-hidden="true" tabindex="-1"></a>rf_vip_fit <span class="sc">|&gt;</span></span>
+<span id="cb72-19"><a href="#cb72-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">|&gt;</span></span>
+<span id="cb72-20"><a href="#cb72-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="HW9_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As we can see based off this plot temperature is the most important variable followed by solar radiation.</p>
+</section>
+<section id="fitting-the-overall-best-model-to-the-entire-data-set" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-the-overall-best-model-to-the-entire-data-set">Fitting the overall best model to the entire data set</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting rf_fit to the entire data set</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>rf_end_fit <span class="ot">&lt;-</span> rf_wkf <span class="sc">|&gt;</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(rf_best_params) <span class="sc">|&gt;</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(bike_data)</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>rf_end_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: rand_forest()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+5 Recipe Steps
+
+• step_date()
+• step_mutate()
+• step_rm()
+• step_dummy()
+• step_normalize()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Ranger result
+
+Call:
+ ranger::ranger(x = maybe_data_frame(x), y = y, mtry = min_cols(~11L,      x), num.threads = 1, verbose = FALSE, seed = sample.int(10^5,      1)) 
+
+Type:                             Regression 
+Number of trees:                  500 
+Sample size:                      353 
+Number of independent variables:  13 
+Mtry:                             11 
+Target node size:                 5 
+Variable importance mode:         none 
+Splitrule:                        variance 
+OOB prediction error (MSE):       7656925 
+R squared (OOB):                  0.9224594 </code></pre>
+</div>
+</div>
+
+
+</section>
 </section>
 
-</main>
-<!-- /main column -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

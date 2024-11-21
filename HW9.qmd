@@ -97,15 +97,15 @@ MLR_CV_fit <- workflow() |>
 rbind(MLR_CV_fit |> collect_metrics())
 
 # Fitting model to training set
-final_fit <- workflow() |>
+MLR_last_fit <- workflow() |>
   add_recipe(MLR_rec) |>
   add_model(MLR_spec) |>
   last_fit(bike_split)
-final_fit |>
+MLR_last_fit |>
 collect_metrics()
 
 # Final model
-final_fit |>
+MLR_last_fit |>
   extract_fit_parsnip() |>
   tidy()
 ```
@@ -149,7 +149,8 @@ library(glmnet)
 # Creating grid 
 LASSO_grid <- LASSO_wkf |>
   tune_grid(resamples = bike_cv10,
-            grid = grid_regular(penalty(), levels = 100)) # Levels is how many LASSO models you want to create
+            grid = grid_regular(penalty(), levels = 100),
+            metrics = metric_set(rmse, mae)) # Levels is how many LASSO models you want to create
 LASSO_grid
 ```
 
@@ -169,6 +170,9 @@ Based off the plot we can see that there is virtually no difference between the 
 LASSO_lowest <- LASSO_grid |>
   select_best(metric = "rmse")
 LASSO_lowest
+
+LASSO_best_mae <- LASSO_grid |>
+  select_best(metric = "mae")
 ```
 
 Now that we have the best one we can use finalize_workflow to tell R to finish the training using the smallest penalty we found in tune(). Then we can fit it to the training model to get our final model fit
@@ -219,7 +223,8 @@ reg_grid <- grid_regular(cost_complexity(),
 # Fitting using tune_grid
 reg_fit <- reg_wkf |>
   tune_grid(resamples = bike_cv10,
-            grid = reg_grid)
+            grid = reg_grid,
+            metrics = metric_set(rmse, mae))
 
 ```
 
@@ -234,6 +239,9 @@ reg_fit |>
 reg_best_params <- reg_fit |>
   select_best(metric = "rmse")
 reg_best_params
+
+reg_best_mae <- reg_fit |>
+  select_best(metric = "mae")
 ```
 
 Next step is to finalize the data using finalize_workflow.
@@ -289,7 +297,8 @@ bag_fit <- bag_wkf |>
   tune_grid(resamples = bike_cv10,
             grid = grid_regular(cost_complexity(),
                                 tree_depth(),
-                                levels = 5)) # only doing five levels because it takes a very long time to load
+                                levels = 5),
+            metrics = metric_set(rmse, mae)) # only doing five levels because it takes a very long time to load
 
 # Collecting metrics across the folds 
 bag_fit |>
@@ -305,11 +314,217 @@ Now we need to once again use select_best() to grab our best parameter and then 
 bag_best_params <- bag_fit |>
   select_best(metric = "rmse")
 
+bag_best_mae <- bag_fit |>
+  select_best(metric = "mae")
+
 # fitting data
 bag_best <- bag_wkf |>
   finalize_workflow(bag_best_params) |>
   fit(bike_train)
 
 bag_best
+```
+
+### Random Forest Model
+
+The final model we will be making is a Random forest model, which also uses bagging. It creates multiple trees from the bootstrap samples then it averages the results from them to create a final prediction. The big difference between it and a bagged tree model is that it is does not use all predictors at every step, instead it randomly splits them into a subset for a number of times based off the tuning parameters. If a really strong predictor exists it will likely cause each bootstrap tree to use it for the first split, which makes bagges trees have more correlated predictions.
+
+```{r}
+# Loading in library
+library(ranger)
+
+# renaming recipe for clarity
+rf_rec <- LASSO_rec
+
+# creating model 
+rf_spec <- rand_forest(mtry = tune()) |>
+  set_engine("ranger") |>
+  set_mode("regression")
+
+# Creating workflow
+rf_wkf <- workflow() |>
+  add_recipe(rf_rec) |>
+  add_model(rf_spec)
+```
+
+Now we need to once again set the grid and fit.
+
+```{r}
+# Creating fit and grid
+rf_fit <- rf_wkf |>
+  tune_grid(resamples = bike_cv10,
+            grid = 10,
+            metrics = metric_set(rmse, mae))
+```
+
+After that we again grab the best params
+
+```{r}
+# grabbing params
+rf_best_params <- rf_fit |>
+  select_best(metric = "rmse")
+
+rf_best_mae <- rf_fit |>
+  select_best(metric = "mae")
+
+# final fit
+rf_final <- rf_wkf |>
+  finalize_workflow(rf_best_params) |>
+  fit(bike_train)
+
+rf_final
+```
+
+
+### Comparing all Final Models using RMSE and MAE
+
+First step is to find which model has the best RMSE and to compare them all in a table to decide upon that.
+
+```{r}
+# final model on LASSO 
+LASSO_last_fit <- LASSO_wkf |>
+  finalize_workflow(LASSO_lowest) |>
+  last_fit(bike_split)
+
+# collecting metrics
+LASSO_last_fit |>
+  collect_metrics()
+
+# final model on regression tree
+reg_last_fit <- reg_wkf |>
+  finalize_workflow(reg_best_params) |>
+  last_fit(bike_split)
+
+# collecting metrics
+reg_last_fit |>
+  collect_metrics()
+
+# final model on bagged tree
+bag_last_fit <- bag_wkf |>
+  finalize_workflow(bag_best_params) |>
+  last_fit(bike_split)
+
+# collecting metrics
+bag_last_fit |>
+  collect_metrics()
+
+# final model on random forest model
+rf_last_fit <- rf_wkf |>
+  finalize_workflow(rf_best_params) |>
+  last_fit(bike_split, metrics = metric_set(rmse))
+
+# collecting metrics for best rmse
+rbind(LASSO_last_fit |>  collect_metrics(),
+  reg_last_fit |> collect_metrics(),
+  bag_last_fit |> collect_metrics(),
+  rf_last_fit |> collect_metrics(),
+  MLR_last_fit |> collect_metrics())
+```
+
+Based off these findings since rf_last_fit has the lowest rmse at 2590 we would choose that as the very best model when selecting based off rmse. 
+
+Now we need to repeat what we just did but instead do it for MAE
+
+```{r}
+LASSO_last_fit2 <- LASSO_wkf |>
+  finalize_workflow(LASSO_best_mae) |>
+  last_fit(bike_split, metrics = metric_set(mae))
+
+# final model on regression tree
+reg_last_fit2 <- reg_wkf |>
+  finalize_workflow(reg_best_mae) |>
+  last_fit(bike_split, metrics = metric_set(mae))
+
+# final model on bagged tree
+bag_last_fit2 <- bag_wkf |>
+  finalize_workflow(bag_best_mae) |>
+  last_fit(bike_split, metrics = metric_set(mae))
+
+# final model on random forest model
+rf_last_fit2 <- rf_wkf |>
+  finalize_workflow(rf_best_mae) |>
+  last_fit(bike_split, metrics = metric_set(mae))
+
+# collecting metrics for best rmse
+rbind(LASSO_last_fit2 |>  collect_metrics(),
+  reg_last_fit2 |> collect_metrics(),
+  bag_last_fit2 |> collect_metrics(),
+  rf_last_fit2 |> collect_metrics())
+```
+
+Based off these results we once again find that rf_last_fit has the lowest MAE at 2132 indicating that both the mae and rmse suppourt the notion that this is the best model to fit our data. 
+
+### Extracting Final Model Fits and Summary of Models
+
+For the LASSO and MLR models we are going to report the final coefficent tables.
+
+```{r}
+# MLR coefficent table
+MLR_last_fit |>
+  extract_fit_parsnip() |>
+  tidy()
+```
+
+Based off these results we find that dew point temperature had the strongest positive impact on bike counts with an estimate of 7143 and a p- value of 2.46e-1, while the season being winter had the strongest negative impact on bike counts with an estimate of -3684 and a p-value of 2.88e-12.
+
+
+```{r}
+# LASSO coefficent table
+LASSO_last_fit |>
+  extract_fit_parsnip() |>
+  tidy()
+```
+
+Based off these results we find that every variable had an extremely low penalty. In this model solar raditaion ending up having the highest positive estimate at 4065, while the season being winter once again had the lowest negative impact at -3653.
+
+For the regression tree model we are going to create a plot of the final fit
+
+```{r}
+# regression tree model plot
+reg_last_fit %>%
+  extract_fit_engine() %>%
+  rpart.plot::rpart.plot(roundint = FALSE, cex = .5)
+```
+
+This plot shows that temp < .034 is an important splitting condition that appears to have a large impact on the quantity of solar radiation when it is not less than that point and when below that it indicates the season is winter. This helps us visualize how each variable is impacting bike counts based off specific values.
+
+For the bagged tree and random forest model we are going to make a variable importance plot using the vip package.
+
+```{r}
+library(vip)
+
+# rebuilding our model
+
+# creating model 
+rf_vip_spec <- rand_forest(mtry = 5, min_n = 5, trees = 100) |>
+  set_engine("ranger", importance = "impurity") |>
+  set_mode("regression")
+
+# Creating workflow
+rf_vip_wkf <- workflow() |>
+  add_recipe(rf_rec) |>
+  add_model(rf_vip_spec)
+
+# creating fit
+rf_vip_fit <- rf_vip_wkf |> 
+  last_fit(bike_split)
+
+# creating plot
+rf_vip_fit |>
+  extract_fit_parsnip() |>
+  vip(num_features = 20)
+
+```
+
+As we can see based off this plot temperature is the most important variable followed by solar radiation.
+
+### Fitting the overall best model to the entire data set
+
+```{r}
+# Fitting rf_fit to the entire data set
+rf_end_fit <- rf_wkf |>
+  finalize_workflow(rf_best_params) |>
+  fit(bike_data)
+rf_end_fit
 ```
 
