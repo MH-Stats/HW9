@@ -1,0 +1,315 @@
+---
+title: "HW9"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Fitting New Models to Bike Data
+
+### Relevant HW8 Code
+
+First step we are going to take to create the new models is to just run the relevant code from HW8 in order to simplfy the environment we will be working in. Additionally, some of this code will be taken from the HW8 key to ensure any errors made in my previous code do not cross over.
+
+```{r}
+# Reading in Data
+library(tidyverse)
+library(tidymodels)
+
+bike_data <- read_csv("https://www4.stat.ncsu.edu/~online/datasets/SeoulBikeData.csv",
+              local = locale(encoding = "latin1"))
+
+# Changing date column
+bike_data <- bike_data |>
+  mutate(date = lubridate::dmy(Date)) |>
+  select(-Date)
+
+# Creating factors
+bike_data <- bike_data |>
+  mutate(season = factor(Seasons),
+    holiday = factor(Holiday), 
+    fn_day = factor(`Functioning Day`)) |>
+  select(-Seasons, -Holiday, -`Functioning Day`)
+
+# renaming variables
+bike_data <- bike_data |>
+rename('bikes' = `Rented Bike Count`,
+       'hour' = "Hour",
+       "temp" = `Temperature(°C)`,
+       "wind" = `Wind speed (m/s)`,
+       "humidity" = `Humidity(%)`,
+       "vis" = `Visibility (10m)`,
+       "dew_point" = `Dew point temperature(°C)`,
+       "solar_rads" = `Solar Radiation (MJ/m2)`,
+       "rain" = "Rainfall(mm)",
+       "snow" = `Snowfall (cm)`)
+
+# removing function day 
+bike_data <- bike_data |>
+  filter(fn_day == "Yes") |>
+  select(-fn_day)
+
+# using group by to find the sum of the bike count, rainfall, and snowfall variables 
+bike_data <- bike_data |>
+  group_by(date, season, holiday) |>
+  summarize(bikes = sum(bikes),
+            temp = mean(temp),
+            humidity = mean(humidity),
+            wind = mean(wind),
+            vis = mean(vis),
+            dew_point = mean(dew_point),
+            solar_rads = mean(solar_rads),
+            rain = sum(rain),
+            snow = sum(snow)) |>
+  ungroup()
+
+# Data check
+bike_data
+
+# Data split
+set.seed(11)
+bike_split <- initial_split(bike_data, prop = 0.75, strata = season)
+bike_train <- training(bike_split)
+bike_test <- testing(bike_split)
+bike_cv10 <- vfold_cv(bike_train, 10)
+
+# Recipe 1 (only one needed for HW9 as per discussion form)
+MLR_rec <- recipe(bikes ~ ., data = bike_train) |>
+  step_date(date, features = "dow") |>
+  step_mutate(weekend_weekday = factor(
+    if_else(date_dow %in% c("Sat", "Sun"), "Weekend", "Weekday"))) |>
+  step_rm(date, date_dow) |>
+  step_dummy(season, holiday, weekend_weekday) |>
+  step_normalize(all_numeric(), -bikes)
+
+# linear model spec
+MLR_spec <- linear_reg() |>
+  set_engine("lm")
+
+# Model fit using 10 fold CV
+MLR_CV_fit <- workflow() |>
+  add_recipe(MLR_rec) |>
+  add_model(MLR_spec) |>
+  fit_resamples(bike_cv10)
+
+# Getting metrics
+rbind(MLR_CV_fit |> collect_metrics())
+
+# Fitting model to training set
+final_fit <- workflow() |>
+  add_recipe(MLR_rec) |>
+  add_model(MLR_spec) |>
+  last_fit(bike_split)
+final_fit |>
+collect_metrics()
+
+# Final model
+final_fit |>
+  extract_fit_parsnip() |>
+  tidy()
+```
+
+### LASSO Model
+
+Now that we have explored the fit of our multiple linear regression models using 10 fold cross validation, we are going to explore what it the fit of a LASSO model will be like. A LASSO model is a Least Angle Subset and Selection Operator, which is similar to the least squares but a penalty is place on the sum of the absolute values of the regression coefficients. Additionally, a (>0) is a tuning parameter and this sets coefficents to 0 as you increase your a (aka shrink).
+
+To start we need to create a LASSO recipe then create a spec that includes tune() in linear_reg() as a penalty with a mixture that is equal to 1. The mixture is what actually turns it into a LASSO model (or it would be an elastic net model), while penalty = tune() tells tidymodels we are going to use a resampling method, and glmnet is what allows us to fit a more complicated model
+ 
+```{r}
+# LASSO recipe (Doing this for clarity s sake even though I could reuse the MLR recipe)
+LASSO_rec <- recipe(bikes ~ ., data = bike_train) |>
+  step_date(date, features = "dow") |>
+  step_mutate(weekend_weekday = factor(
+    if_else(date_dow %in% c("Sat", "Sun"), "Weekend", "Weekday"))) |>
+  step_rm(date, date_dow) |>
+  step_dummy(season, holiday, weekend_weekday) |>
+  step_normalize(all_numeric(), -bikes) # Important note LASSO models should be fit on standardized predictors
+
+# Creating model spec
+LASSO_spec <- linear_reg(penalty = tune(), mixture = 1) |>
+  set_engine("glmnet")
+```
+
+The next step in the process is to create our workflow which is exactly the same process used to create the MLR workflow.
+
+```{r}
+# Creating LASSO workflow
+LASSO_wkf <- workflow() |>
+  add_recipe(LASSO_rec) |>
+  add_model(LASSO_spec)
+LASSO_wkf
+```
+
+To actually fit the model we are going to need to use tune_grid() and grid_regular(), where tune_grid() specifies the values of the tuning parameter, and grid_regular() is a function that chooses a grid based of reasonable values.
+
+```{r}
+# Loading in glmnet
+library(glmnet)
+# Creating grid 
+LASSO_grid <- LASSO_wkf |>
+  tune_grid(resamples = bike_cv10,
+            grid = grid_regular(penalty(), levels = 100)) # Levels is how many LASSO models you want to create
+LASSO_grid
+```
+
+Just as before in the MLR model we need to collect all the metrics across the 100 models we created using collect_metrics(), but to make the values easier to understand we are going to plot it.
+
+```{r}
+LASSO_grid |>
+  collect_metrics() |>
+  filter(.metric == "rmse") |>
+  ggplot(aes(penalty, mean, colour = .metric)) +
+  geom_line()
+```
+
+Based off the plot we can see that there is virtually no difference between the RMSE values for our LASSO models, but to get the one with the smallest penalty we will use select_best().
+
+```{r}
+LASSO_lowest <- LASSO_grid |>
+  select_best(metric = "rmse")
+LASSO_lowest
+```
+
+Now that we have the best one we can use finalize_workflow to tell R to finish the training using the smallest penalty we found in tune(). Then we can fit it to the training model to get our final model fit
+
+```{r}
+# checking to make sure it sets the correct penalty in tune()
+LASSO_wkf |>
+  finalize_workflow(LASSO_lowest)
+
+# Creating final model fit
+LASSO_final <- LASSO_wkf |>
+  finalize_workflow(LASSO_lowest) |>
+  fit(bike_train)
+
+# Using tidy() to display the model fit
+tidy(LASSO_final)
+```
+
+### Regression Tree Model
+
+Tree based methods are a flexible way to split up predictor space into regions. Each of the regions created can have a different prediction made for it. A regression tree is used when the goal is to predict a continuous response, normally using the mean of observations in region as the prediction.
+
+```{r}
+# Making new recipe for clarity
+reg_rec <- LASSO_rec 
+
+# Creating decision_tree
+reg_spec <- decision_tree(tree_depth = tune(),
+                           min_n = 20,
+                           cost_complexity = tune()) |>
+  set_engine("rpart") |>
+  set_mode("regression")
+
+# Creating workflow
+reg_wkf <- workflow() |>
+  add_recipe(reg_rec) |>
+  add_model(reg_spec)
+```
+
+The next step is to use CV to select the tuning parameters we will use and to do so we will once again use tune_grid().
+
+```{r}
+# Specifying levels
+reg_grid <- grid_regular(cost_complexity(),
+                         tree_depth(),
+                         levels = c(10, 5))
+
+# Fitting using tune_grid
+reg_fit <- reg_wkf |>
+  tune_grid(resamples = bike_cv10,
+            grid = reg_grid)
+
+```
+
+Now that this is setup we should sort this by getting the smallest rmse value, and while doing this will filter just to show rmse. After that we will use select_best() to grab the best tuning parameter values.
+
+```{r}
+# collecting metrics
+reg_fit |>
+  collect_metrics() 
+ 
+# using select_best()
+reg_best_params <- reg_fit |>
+  select_best(metric = "rmse")
+reg_best_params
+```
+
+Next step is to finalize the data using finalize_workflow.
+
+```{r}
+
+# Final fit
+reg_final <- reg_wkf |>
+  finalize_workflow(reg_best_params) |>
+  fit(bike_train)
+
+```
+
+To see the way that data is actually fit we can plot the tree
+
+```{r}
+# loading in rpart.plot
+library(rpart.plot)
+
+# Creating plot
+reg_final %>%
+  extract_fit_engine() %>%
+  rpart.plot::rpart.plot(roundint = FALSE)
+```
+
+### Bagged Tree Model
+
+A bagged tree model is when you use bootstrapping aggregation minus a general method. Bootstrapping is when you resample from the data (non-parametric) or a fitted model (parametric), and have a method or estimation applied to each resample. This can be used to obtain standard errors or construct confidence intervals, but in our case we are going to be looking at standard errors.
+
+```{r}
+# loading in baguette libary
+library(baguette)
+
+# Renaming rec for clarity
+bag_rec <- LASSO_rec
+
+# Setting up model
+bag_spec <- bag_tree(tree_depth = tune(), min_n = 20, cost_complexity = tune()) |>
+  set_engine("rpart") |>
+  set_mode("regression")
+
+# Creating workflow
+bag_wkf <- workflow() |>
+  add_recipe(bag_rec) |>
+  add_model(bag_spec)
+```
+
+Now we are going to fit to CV folds as we did to the other models, but of important note this is not really necessary with bagged tree models as we could instead just use out-of-bag observations to determine how well our model is working. We are also going to create a new reg_grid to tune our model.
+
+```{r}
+# Creating fit and grid
+bag_fit <- bag_wkf |>
+  tune_grid(resamples = bike_cv10,
+            grid = grid_regular(cost_complexity(),
+                                tree_depth(),
+                                levels = 5)) # only doing five levels because it takes a very long time to load
+
+# Collecting metrics across the folds 
+bag_fit |>
+  collect_metrics() |>
+  filter(.metric == "rmse") |>
+  arrange(cost_complexity)
+```
+
+Now we need to once again use select_best() to grab our best parameter and then fit it on to the training data.
+
+```{r}
+# grabbing best param
+bag_best_params <- bag_fit |>
+  select_best(metric = "rmse")
+
+# fitting data
+bag_best <- bag_wkf |>
+  finalize_workflow(bag_best_params) |>
+  fit(bike_train)
+
+bag_best
+```
+
